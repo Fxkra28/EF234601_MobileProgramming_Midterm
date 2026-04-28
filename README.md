@@ -156,4 +156,4 @@ sqflite.update(remoteId, syncStatus='synced')
   ↓
 notification.scheduleTaskReminder                 ← if Remind me is on
 ```
-[![Demo Video](https://img.youtube.com/vi/EMb5pEH2-1M/0.jpg)](https://youtu.be/EMb5pEH2-1M "Klik untuk menonton")
+[![Demo Video](https://img.youtube.com/vi/EMb5pEH2-1M/maxresdefault.jpg)](https://youtu.be/EMb5pEH2-1M)
