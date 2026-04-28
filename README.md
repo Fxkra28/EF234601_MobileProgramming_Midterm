@@ -2,11 +2,11 @@
 
 > | Field | Value |
 > |---|---|
-> | **Name** | _____________________________ |
-> | **NRP / Student ID** | _____________________________ |
-> | **Task / Title** | _____________________________ |
-> | **Course** | _____________________________ |
-> | **Lecturer** | _____________________________ |
+> | **Name** | Muiz Surya Fata |
+> | **NRP / Student ID** | 5025231005 |
+> | **Task / Title** | Mini Project Mid Term Project : Fata's Doze Task |
+> | **Course** | EF236401_Mobile Programming |
+> | **Lecturer** | Agus Budi Raharjo, S.Kom, M.Kom., Ph.D. |
 
 This is my mid-semester project. I built a small Flutter task-manager where I sign in, create agendas for specific days and times, attach a photo and a map-pinned location, optionally set a reminder, and the app pops up a notification when the start time hits.
 
@@ -74,25 +74,14 @@ This locks each user to their own subtree.
 ```bash
 flutter pub get
 cd ios && pod install && cd ..
-./run.sh
+flutter run --profile
 ```
-
-`./run.sh` is a one-line wrapper I committed at the project root — see the next section for why I need it.
-
----
-
-## Why `./run.sh` instead of plain `flutter run`?
-
-My iPhone is on iOS 26.4.2, and Flutter's debug-mode JIT crashes immediately on launch because iOS 26 has hardened executable-memory rules that don't allow JIT-compiled code. The error always looks like `EXC_BAD_ACCESS code=50` at a raw memory address.
 
 I worked around it by always running in **profile mode**, which uses AOT-compiled native code (no JIT, so iOS doesn't kill it). The wrapper just runs:
 
 ```bash
-flutter run --profile -d 00008110-001954C62205801E
+flutter run --profile
 ```
-
-Hot-reload is off in profile mode, but I can hot-restart with capital **R** in the terminal. Builds take about 2–3 minutes from cold.
-
 ---
 
 ## Project layout
@@ -173,67 +162,3 @@ sqflite.update(remoteId, syncStatus='synced')
   ↓
 notification.scheduleTaskReminder                 ← if Remind me is on
 ```
-
-If Firestore fails (no internet), the row stays `syncStatus='pending'` and the Firestore SDK replays it on reconnect.
-
----
-
-## How I demo each requirement
-
-### 1 — Relational CRUD
-
-I have two tables linked by a foreign key. To prove the JOIN actually works at the SQL level (not just in Dart code):
-
-```bash
-adb shell run-as com.example.ets1 sqlite3 \
-  /data/data/com.example.ets1/databases/ets1.db \
-  "SELECT t.title, c.name FROM tasks t JOIN categories c ON t.categoryId = c.id;"
-```
-
-Both sides have full CRUD UI: tasks via the FAB on Daily/Calendar, categories on the Labels tab. The FK is `ON DELETE RESTRICT`, so if I try to delete a category that still has tasks, the operation throws and I get a snackbar instead of silently destroying data.
-
-### 2 — Firebase Auth
-
-I can register a new email, sign in, sign out, hit forgot-password (it sends a real reset email), and delete my account from the Profile screen. Auth errors are translated to friendly messages.
-
-### 3 — Firestore
-
-Open Firebase console → click on my user document → expand the `tasks` and `categories` sub-collections. Every save I make in the app appears there within a second. If I sign out and sign back in (or wipe the app and reinstall), my data hydrates back from Firestore.
-
-### 4 — Notifications
-
-Two ways to demo:
-
-- **Profile → Test reminder pop-up (10 s)** → after 10 seconds I get both the iOS system banner AND my in-app top banner sliding down.
-- Save a task with `Remind me` ON for ~6 minutes from now → I get a "Heads up" 5 minutes before, and a "Reminder" at the start time. Tapping either notification opens that task's detail screen.
-
-The cards also show visual urgency without needing a save:
-
-- Orange **"Starting soon"** badge once a task is within 30 minutes of starting
-- Red **"OVERDUE"** badge once the start time is past
-
-A 30-second ticker on the task controller calls `notifyListeners()` so the consumers re-render and the badges transition automatically.
-
-### 5 — Camera + GPS
-
-- The camera icon in the task form opens the camera via `image_picker`. The photo gets copied into the app's documents directory so it survives across runs, and the thumbnail shows on the card and the detail screen.
-- The map icon opens my location picker. I can search a place by name (Nominatim), tap anywhere on the map, or hit the GPS button to use my current location. Both the place name and the lat/lng get saved on the task. On the detail screen there's a small interactive map showing the pin.
-
----
-
-## Verification checklist
-
-What I check before submitting:
-
-- [ ] `flutterfire configure` succeeded — `lib/firebase_options.dart` has real keys, not the placeholder
-- [ ] Register a new email → sign in → sign out → forgot-password sends a real email
-- [ ] `sqlite3 ... SELECT t.title, c.name FROM tasks t JOIN categories c ON t.categoryId = c.id` returns rows
-- [ ] Deleting a category that still has tasks shows a friendly snackbar (FK RESTRICT works)
-- [ ] New tasks appear in Firestore console at `users/{uid}/tasks` in real time
-- [ ] Profile → Test reminder → iOS banner + in-app pop-up both fire after 10 s
-- [ ] A task with reminder ~6 min ahead fires the heads-up at 1 min and the reminder at 6 min
-- [ ] Tap a notification → task detail screen opens
-- [ ] Camera + map picker save a photo and a place name on the task
-- [ ] A pending task transitions to "Starting soon" 30 min before, then "OVERDUE" once past — without saving anything
-- [ ] Tap a task card → read-only detail screen → Edit FAB or pencil icon opens the editor
-- [ ] Sign out + sign back in → tasks restore from Firestore (photos stay device-local since I don't use Storage)
