@@ -1,0 +1,56 @@
+name: ets1
+description: "PPB2 ETS#1 - Fata's Doze Task"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State management & UI
+  provider: ^6.1.2
+  get: ^4.6.6
+  google_fonts: ^6.2.1
+  flutter_slidable: ^3.1.0
+  intl: ^0.19.0
+  table_calendar: ^3.1.2
+
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+
+  # System notifications (in addition to in-app pop-ups)
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+  flutter_timezone: ^3.0.1
+
+  # Local relational DB
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  path_provider: ^2.1.4
+
+  # Smartphone resources
+  image_picker: ^1.1.2
+  geolocator: ^13.0.1
+  permission_handler: ^11.3.1
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  http: ^1.2.2
+
+  # Connectivity awareness
+  connectivity_plus: ^6.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+      - assets/images/
