@@ -11,7 +11,6 @@
 This is my mid-semester project. I built a small Flutter task-manager where I sign in, create agendas for specific days and times, attach a photo and a map-pinned location, optionally set a reminder, and the app pops up a notification when the start time hits.
 
 I designed it to satisfy the five required capabilities:
-
 | # | Requirement | How I covered it |
 |---|---|---|
 | 1 | **CRUD with a relational database** | I store data locally in sqflite with two related tables — `tasks` and `categories` — connected by a foreign key (`ON DELETE RESTRICT`). Both tables have full create/read/update/delete UI, and I run a real JOIN query when I render the daily list. |
@@ -78,10 +77,6 @@ flutter run --profile
 ```
 
 I worked around it by always running in **profile mode**, which uses AOT-compiled native code (no JIT, so iOS doesn't kill it). The wrapper just runs:
-
-```bash
-flutter run --profile
-```
 ---
 
 ## Project layout
@@ -150,7 +145,6 @@ users/
 I kept Firestore as nested sub-collections because it makes the security rules trivial (a user can only touch their own subtree) and avoids needing composite indexes.
 
 ### How writes flow
-
 When I save a task, the controller does:
 
 ```
